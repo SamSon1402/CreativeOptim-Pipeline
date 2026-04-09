@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CreativeOptim-Pipeline — AI Creative Testing & Optimization | Dailymotion</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ray-amber: #f59e0b;
+            --ray-rose: #f43f5e;
+            --ray-emerald: #10b981;
+            --ray-sky: #0ea5e9;
+            --ray-violet: #8b5cf6;
+            --ray-white: #fafafa;
+            --bg-base: #09090b;
+            --bg-panel: #18181b;
+            --bg-raised: #27272a;
+            --bg-hover: #3f3f46;
+            --text-h: #fafafa;
+            --text-p: #a1a1aa;
+            --text-m: #71717a;
+            --ring: #3f3f46;
+            --glow-amber: rgba(245,158,11,0.25);
+            --grad-ray: linear-gradient(135deg, #f59e0b 0%, #f43f5e 50%, #8b5cf6 100%);
+        }
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg-base);color:var(--text-h);min-height:100vh;
+            background-image:radial-gradient(ellipse at 30% 90%,rgba(245,158,11,0.06) 0%,transparent 50%),radial-gradient(ellipse at 70% 10%,rgba(244,63,94,0.05) 0%,transparent 50%);}
+
+        .header{background:rgba(24,24,27,0.8);backdrop-filter:blur(20px);border-bottom:1px solid var(--ring);padding:0.6rem 2rem;position:sticky;top:0;z-index:100;}
+        .header-inner{max-width:1800px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;}
+        .logo{display:flex;align-items:center;gap:0.65rem;}
+        .logo-mark{width:40px;height:40px;background:var(--grad-ray);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;box-shadow:0 0 20px var(--glow-amber);}
+        .logo-title{font-size:1.35rem;font-weight:800;background:var(--grad-ray);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+        .logo-sub{font-size:0.5rem;color:var(--text-m);text-transform:uppercase;letter-spacing:3px;}
+        .badges{display:flex;gap:0.3rem;}
+        .badge{background:var(--bg-panel);border:1px solid var(--ring);padding:0.25rem 0.6rem;border-radius:5px;font-size:0.58rem;color:var(--text-m);font-family:'IBM Plex Mono',monospace;}
+        .badge.live{background:rgba(245,158,11,0.1);border-color:var(--ray-amber);color:var(--ray-amber);}
+        .badge.live::before{content:'';display:inline-block;width:5px;height:5px;background:var(--ray-amber);border-radius:50%;margin-right:4px;animation:p 1.5s infinite;}
+        @keyframes p{0%,100%{opacity:1}50%{opacity:0.3}}
+
+        .main{max-width:1800px;margin:0 auto;padding:1.2rem 2rem;}
+        .hero{text-align:center;margin-bottom:1.2rem;}
+        .hero h1{font-size:2.1rem;font-weight:900;background:var(--grad-ray);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:0.25rem;}
+        .hero p{color:var(--text-p);font-size:0.9rem;}
+
+        .grid{display:grid;grid-template-columns:1fr 1fr 380px;gap:1rem;}
+        @media(max-width:1400px){.grid{grid-template-columns:1fr 1fr;}}
+        @media(max-width:900px){.grid{grid-template-columns:1fr;}}
+
+        .card{background:var(--bg-panel);border:1px solid var(--ring);border-radius:14px;overflow:hidden;}
+        .card-h{padding:0.8rem 1.1rem;border-bottom:1px solid var(--ring);display:flex;align-items:center;justify-content:space-between;}
+        .card-h h3{font-size:0.82rem;font-weight:700;display:flex;align-items:center;gap:0.4rem;}
+        .card-b{padding:1.1rem;}
+
+        /* Variant Cards */
+        .variants{display:flex;flex-direction:column;gap:0.75rem;}
+        .variant{background:var(--bg-raised);border-radius:12px;overflow:hidden;border:1px solid var(--ring);transition:all 0.3s;cursor:pointer;}
+        .variant:hover{border-color:var(--ray-amber);}
+        .variant.winner{border-color:var(--ray-emerald);box-shadow:0 0 20px rgba(16,185,129,0.15);}
+        .variant-thumb{height:120px;background-size:cover;background-position:center;position:relative;}
+        .variant-badge{position:absolute;top:0.5rem;right:0.5rem;padding:0.2rem 0.5rem;border-radius:4px;font-size:0.55rem;font-weight:700;font-family:'IBM Plex Mono',monospace;}
+        .variant-badge.a{background:var(--ray-amber);color:#000;}
+        .variant-badge.b{background:var(--ray-rose);color:white;}
+        .variant-badge.c{background:var(--ray-violet);color:white;}
+        .variant-badge.win{background:var(--ray-emerald);color:white;}
+        .variant-info{padding:0.75rem;}
+        .variant-title{font-size:0.78rem;font-weight:700;margin-bottom:0.15rem;}
+        .variant-desc{font-size:0.62rem;color:var(--text-m);margin-bottom:0.5rem;}
+        .variant-scores{display:grid;grid-template-columns:repeat(3,1fr);gap:0.35rem;}
+        .vscore{text-align:center;background:var(--bg-base);border-radius:6px;padding:0.4rem;}
+        .vscore-val{font-size:0.95rem;font-weight:800;font-family:'IBM Plex Mono',monospace;}
+        .vscore-val.amber{color:var(--ray-amber);}
+        .vscore-val.rose{color:var(--ray-rose);}
+        .vscore-val.sky{color:var(--ray-sky);}
+        .vscore-val.emerald{color:var(--ray-emerald);}
+        .vscore-label{font-size:0.48rem;color:var(--text-m);text-transform:uppercase;letter-spacing:0.5px;}
+
+        /* Bar Chart comparison */
+        .compare-chart{margin-top:0.5rem;}
+        .compare-row{display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;}
+        .compare-label{width:70px;font-size:0.65rem;color:var(--text-p);text-align:right;}
+        .compare-bars{flex:1;display:flex;flex-direction:column;gap:3px;}
+        .cbar-wrap{display:flex;align-items:center;gap:0.4rem;}
+        .cbar-tag{width:14px;font-size:0.5rem;font-weight:700;font-family:'IBM Plex Mono',monospace;}
+        .cbar{height:14px;border-radius:3px;transition:width 1s ease;}
+        .cbar.a{background:var(--ray-amber);}
+        .cbar.b{background:var(--ray-rose);}
+        .cbar.c{background:var(--ray-violet);}
+        .cbar-val{font-size:0.55rem;color:var(--text-m);font-family:'IBM Plex Mono',monospace;}
+
+        /* Confidence Gauge */
+        .gauge-wrap{display:flex;flex-direction:column;align-items:center;padding:0.5rem 0;}
+        .gauge-ring{width:120px;height:120px;border-radius:50%;background:conic-gradient(var(--ray-emerald) 0deg,var(--ray-emerald) var(--angle),var(--bg-raised) var(--angle),var(--bg-raised) 360deg);display:flex;align-items:center;justify-content:center;position:relative;}
+        .gauge-inner{width:90px;height:90px;border-radius:50%;background:var(--bg-panel);display:flex;flex-direction:column;align-items:center;justify-content:center;}
+        .gauge-val{font-size:1.6rem;font-weight:800;font-family:'IBM Plex Mono',monospace;color:var(--ray-emerald);}
+        .gauge-label{font-size:0.5rem;color:var(--text-m);text-transform:uppercase;letter-spacing:1px;margin-top:0.5rem;}
+
+        /* Pipeline steps */
+        .steps{display:flex;flex-direction:column;gap:0.35rem;}
+        .step{display:flex;align-items:center;gap:0.5rem;padding:0.45rem 0.6rem;background:var(--bg-raised);border-radius:8px;border-left:3px solid var(--ring);transition:all 0.3s;}
+        .step.active{border-left-color:var(--ray-amber);background:rgba(245,158,11,0.05);}
+        .step.done{border-left-color:var(--ray-emerald);}
+        .step-icon{width:26px;height:26px;background:var(--bg-base);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:0.75rem;}
+        .step-name{font-size:0.68rem;font-weight:600;flex:1;}
+        .step-time{font-size:0.55rem;font-family:'IBM Plex Mono',monospace;color:var(--text-m);}
+
+        /* Controls */
+        .ctrls{display:flex;gap:0.4rem;margin-bottom:0.75rem;}
+        .ctrl-btn{flex:1;padding:0.65rem;background:var(--bg-raised);border:1px solid var(--ring);border-radius:9px;color:var(--text-h);font-family:'Plus Jakarta Sans';font-size:0.75rem;font-weight:600;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:0.4rem;}
+        .ctrl-btn:hover{border-color:var(--ray-amber);background:rgba(245,158,11,0.08);}
+        .ctrl-btn.active{border-color:var(--ray-amber);background:rgba(245,158,11,0.15);color:var(--ray-amber);}
+
+        /* Summary */
+        .summary{background:var(--bg-raised);border-radius:10px;padding:0.9rem;margin-top:0.5rem;}
+        .summary-title{font-size:0.72rem;font-weight:700;margin-bottom:0.5rem;display:flex;align-items:center;gap:0.4rem;}
+        .summary-text{font-size:0.68rem;color:var(--text-p);line-height:1.5;}
+        .summary-text strong{color:var(--ray-emerald);}
+
+        .toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--bg-raised);border:1px solid var(--ring);border-radius:12px;padding:0.7rem 1rem;display:flex;align-items:center;gap:0.5rem;box-shadow:0 10px 40px rgba(0,0,0,0.5);transform:translateY(100px);opacity:0;transition:all 0.35s;z-index:1001;}
+        .toast.show{transform:translateY(0);opacity:1;}
+        ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:var(--bg-base);}::-webkit-scrollbar-thumb{background:var(--ring);border-radius:3px;}
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-inner">
+            <div class="logo">
+                <div class="logo-mark">⚡</div>
+                <div><div class="logo-title">CreativeOptim-Pipeline</div><div class="logo-sub">Dailymotion Ray Creative Intelligence</div></div>
+            </div>
+            <div class="badges">
+                <span class="badge live">● Testing</span>
+                <span class="badge">A/B/C Multivariate</span>
+                <span class="badge">LLM Scoring</span>
+                <span class="badge">Predict AI</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="hero">
+            <h1>⚡ AI Creative Testing & Optimization</h1>
+            <p>Multivariate ad creative testing with LLM-powered engagement scoring and automated winner selection</p>
+        </div>
+
+        <div class="ctrls">
+            <button class="ctrl-btn" id="runBtn" onclick="runTest()">🚀 Run A/B/C Test</button>
+            <button class="ctrl-btn" onclick="generateVariants()">🎨 Generate Variants</button>
+            <button class="ctrl-btn" onclick="resetAll()">🔄 Reset</button>
+        </div>
+
+        <div class="grid">
+            <!-- Variant A -->
+            <div class="card">
+                <div class="card-h"><h3>🅰️ Variant A — Bold CTA</h3><span class="variant-badge a">CONTROL</span></div>
+                <div class="card-b">
+                    <div class="variant">
+                        <div class="variant-thumb" style="background-image:url('https://images.unsplash.com/photo-1611162616475-46b635cb6868?w=600');"></div>
+                        <div class="variant-info">
+                            <div class="variant-title">"Unleash Your Potential — Shop Now"</div>
+                            <div class="variant-desc">High-contrast, urgency-driven CTA. Red accent button. 16:9 pre-roll.</div>
+                            <div class="variant-scores">
+                                <div class="vscore"><div class="vscore-val amber" id="vA_ctr">—</div><div class="vscore-label">Pred. CTR</div></div>
+                                <div class="vscore"><div class="vscore-val rose" id="vA_eng">—</div><div class="vscore-label">Engagement</div></div>
+                                <div class="vscore"><div class="vscore-val sky" id="vA_recall">—</div><div class="vscore-label">Brand Recall</div></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Variant B -->
+            <div class="card">
+                <div class="card-h"><h3>🅱️ Variant B — Storytelling</h3><span class="variant-badge b">CHALLENGER</span></div>
+                <div class="card-b">
+                    <div class="variant">
+                        <div class="variant-thumb" style="background-image:url('https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=600');"></div>
+                        <div class="variant-info">
+                            <div class="variant-title">"Every Step Tells a Story"</div>
+                            <div class="variant-desc">Narrative-driven, emotional hook. Soft palette. 15s mid-roll format.</div>
+                            <div class="variant-scores">
+                                <div class="vscore"><div class="vscore-val amber" id="vB_ctr">—</div><div class="vscore-label">Pred. CTR</div></div>
+                                <div class="vscore"><div class="vscore-val rose" id="vB_eng">—</div><div class="vscore-label">Engagement</div></div>
+                                <div class="vscore"><div class="vscore-val sky" id="vB_recall">—</div><div class="vscore-label">Brand Recall</div></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right sidebar -->
+            <div style="display:flex;flex-direction:column;gap:1rem;">
+                <div class="card">
+                    <div class="card-h"><h3>🏆 Winner Confidence</h3></div>
+                    <div class="card-b">
+                        <div class="gauge-wrap">
+                            <div class="gauge-ring" id="gaugeRing" style="--angle:0deg">
+                                <div class="gauge-inner">
+                                    <div class="gauge-val" id="gaugeVal">—</div>
+                                </div>
+                            </div>
+                            <div class="gauge-label">Statistical Confidence</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-h"><h3>⚙️ Optimization Pipeline</h3></div>
+                    <div class="card-b">
+                        <div class="steps" id="optSteps">
+                            <div class="step" id="s0"><div class="step-icon">📐</div><div class="step-name">Creative Parsing</div><div class="step-time">—</div></div>
+                            <div class="step" id="s1"><div class="step-icon">🧠</div><div class="step-name">LLM Engagement Scoring</div><div class="step-time">—</div></div>
+                            <div class="step" id="s2"><div class="step-icon">📊</div><div class="step-name">Bayesian A/B Analysis</div><div class="step-time">—</div></div>
+                            <div class="step" id="s3"><div class="step-icon">🎯</div><div class="step-name">Audience Segment Fit</div><div class="step-time">—</div></div>
+                            <div class="step" id="s4"><div class="step-icon">🏆</div><div class="step-name">Winner Selection</div><div class="step-time">—</div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Variant C -->
+            <div class="card">
+                <div class="card-h"><h3>🅲 Variant C — Social Proof</h3><span class="variant-badge c">CHALLENGER</span></div>
+                <div class="card-b">
+                    <div class="variant">
+                        <div class="variant-thumb" style="background-image:url('https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600');"></div>
+                        <div class="variant-info">
+                            <div class="variant-title">"2M+ Athletes Trust This"</div>
+                            <div class="variant-desc">Social proof + data-driven. Minimal design. 6s bumper ad.</div>
+                            <div class="variant-scores">
+                                <div class="vscore"><div class="vscore-val amber" id="vC_ctr">—</div><div class="vscore-label">Pred. CTR</div></div>
+                                <div class="vscore"><div class="vscore-val rose" id="vC_eng">—</div><div class="vscore-label">Engagement</div></div>
+                                <div class="vscore"><div class="vscore-val sky" id="vC_recall">—</div><div class="vscore-label">Brand Recall</div></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comparison Chart -->
+            <div class="card">
+                <div class="card-h"><h3>📊 Head-to-Head Comparison</h3></div>
+                <div class="card-b">
+                    <div class="compare-chart" id="compareChart">
+                        <div style="color:var(--text-m);font-size:0.8rem;text-align:center;padding:1.5rem;">Run the A/B/C test to see comparison</div>
+                    </div>
+                    <div class="summary" id="summaryPanel" style="display:none;">
+                        <div class="summary-title">🤖 AI Recommendation</div>
+                        <div class="summary-text" id="summaryText"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Placeholder for alignment -->
+            <div class="card">
+                <div class="card-h"><h3>📈 Cost Efficiency</h3></div>
+                <div class="card-b">
+                    <div class="metrics-mini" style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
+                        <div class="vscore"><div class="vscore-val emerald" id="cpm">—</div><div class="vscore-label">Est. eCPM</div></div>
+                        <div class="vscore"><div class="vscore-val amber" id="roas">—</div><div class="vscore-label">Pred. ROAS</div></div>
+                        <div class="vscore"><div class="vscore-val rose" id="cpe">—</div><div class="vscore-label">Cost/Engage</div></div>
+                        <div class="vscore"><div class="vscore-val sky" id="lift">—</div><div class="vscore-label">Brand Lift</div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div class="toast" id="toast"><span id="toastIcon">✅</span><div><div style="font-size:0.8rem;font-weight:600;" id="toastT"></div><div style="font-size:0.6rem;color:var(--text-m);" id="toastM"></div></div></div>
+
+    <script>
+        const scores = {
+            A: { ctr: 3.2, eng: 6.8, recall: 44 },
+            B: { ctr: 4.1, eng: 8.4, recall: 52 },
+            C: { ctr: 2.7, eng: 5.1, recall: 38 }
+        };
+
+        function runTest() {
+            document.getElementById('runBtn').classList.add('active');
+            showToast('🚀','Test Started','Running multivariate analysis...');
+            animateSteps(()=>{
+                populateScores();
+                renderComparison();
+                animateGauge(94);
+                showSummary();
+                document.getElementById('cpm').textContent='€8.40';
+                document.getElementById('roas').textContent='4.2x';
+                document.getElementById('cpe').textContent='€0.12';
+                document.getElementById('lift').textContent='+10pt';
+                showToast('🏆','Winner Found','Variant B outperforms by 2.5x engagement');
+            });
+        }
+
+        function animateSteps(cb) {
+            const times=[85,420,310,180,45];
+            let i=0;
+            function next(){
+                if(i>0){document.getElementById('s'+(i-1)).className='step done';document.getElementById('s'+(i-1)).querySelector('.step-time').textContent=times[i-1]+'ms';}
+                if(i>=5){setTimeout(cb,200);return;}
+                document.getElementById('s'+i).className='step active';
+                i++;
+                setTimeout(next,200+Math.random()*300);
+            }
+            next();
+        }
+
+        function populateScores() {
+            ['A','B','C'].forEach(v=>{
+                const s=scores[v];
+                const jitter=()=>(Math.random()*0.4-0.2).toFixed(1);
+                document.getElementById('v'+v+'_ctr').textContent=(s.ctr+parseFloat(jitter())).toFixed(1)+'%';
+                document.getElementById('v'+v+'_eng').textContent=(s.eng+parseFloat(jitter())).toFixed(1)+'%';
+                document.getElementById('v'+v+'_recall').textContent=Math.round(s.recall+parseFloat(jitter()*10))+'%';
+            });
+        }
+
+        function renderComparison() {
+            const metrics=['CTR','Engagement','Brand Recall'];
+            const vals={CTR:[3.2,4.1,2.7],Engagement:[6.8,8.4,5.1],'Brand Recall':[44,52,38]};
+            const chart=document.getElementById('compareChart');
+            chart.innerHTML=metrics.map(m=>{
+                const max=Math.max(...vals[m]);
+                return `<div class="compare-row">
+                    <div class="compare-label">${m}</div>
+                    <div class="compare-bars">
+                        ${['a','b','c'].map((t,i)=>`<div class="cbar-wrap"><span class="cbar-tag">${t.toUpperCase()}</span><div class="cbar ${t}" style="width:${(vals[m][i]/max)*100}%"></div><span class="cbar-val">${vals[m][i]}${m==='Brand Recall'?'%':'%'}</span></div>`).join('')}
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function animateGauge(target) {
+            let v=0;
+            const int=setInterval(()=>{
+                v+=2;
+                if(v>target)v=target;
+                document.getElementById('gaugeRing').style.setProperty('--angle',(v/100*360)+'deg');
+                document.getElementById('gaugeVal').textContent=v+'%';
+                if(v>=target)clearInterval(int);
+            },20);
+        }
+
+        function showSummary() {
+            const p=document.getElementById('summaryPanel');
+            p.style.display='block';
+            document.getElementById('summaryText').innerHTML=`<strong>Variant B ("Every Step Tells a Story")</strong> is the recommended winner with 94% statistical confidence. It achieves <strong>4.1% CTR</strong> (28% above control), <strong>8.4% engagement</strong> (2.5x the bumper format), and <strong>52% predicted brand recall</strong> (+10pt lift). Recommend deploying as primary creative across Dailymotion inventory and scaling via Ray Predict AI.`;
+        }
+
+        function generateVariants() {
+            showToast('🎨','Generating','LLM creating new copy variants...');
+            setTimeout(()=>showToast('✅','Done','3 new metadata variants generated'),1500);
+        }
+
+        function resetAll() {
+            ['A','B','C'].forEach(v=>{['ctr','eng','recall'].forEach(m=>document.getElementById('v'+v+'_'+m).textContent='—');});
+            document.getElementById('gaugeRing').style.setProperty('--angle','0deg');
+            document.getElementById('gaugeVal').textContent='—';
+            document.getElementById('compareChart').innerHTML='<div style="color:var(--text-m);font-size:0.8rem;text-align:center;padding:1.5rem;">Run the A/B/C test to see comparison</div>';
+            document.getElementById('summaryPanel').style.display='none';
+            ['cpm','roas','cpe','lift'].forEach(id=>document.getElementById(id).textContent='—');
+            for(let i=0;i<5;i++){document.getElementById('s'+i).className='step';document.getElementById('s'+i).querySelector('.step-time').textContent='—';}
+            document.getElementById('runBtn').classList.remove('active');
+            showToast('🔄','Reset','All data cleared');
+        }
+
+        function showToast(icon,t,m){
+            document.getElementById('toastIcon').textContent=icon;
+            document.getElementById('toastT').textContent=t;
+            document.getElementById('toastM').textContent=m;
+            const el=document.getElementById('toast');el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2500);
+        }
+    </script>
+</body>
+</html>
